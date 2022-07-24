@@ -1,0 +1,18 @@
+# Set Env
+cd ~/MyFiles/airflow
+minikube set config cpus 2
+minikube set config memory 8192
+eval $(minikube docker-env)
+kubectl config set-context --current --namespace=airflow
+alias k=kubectl
+
+# Deploy redhat postgres
+kubectl apply -f airflow-postgres.yaml
+
+# install airflow
+helm upgrade --install airflow apache-airflow/airflow --namespace airflow -f airflow-values.yaml
+helm install airflow apache-airflow/airflow --namespace airflow -f airflow-values.yaml
+helm template airflow apache-airflow/airflow --namespace airflow -f airflow-values.yaml
+
+
+minikube service airflow-webserver --url
